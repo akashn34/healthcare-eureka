@@ -12,7 +12,7 @@ pipeline {
 
         stage('Build & Package Eureka') {
             steps {
-                sh 'mvnw clean package'               // Build the Java Eureka Server
+                sh 'mvn clean package'               // Build the Java Eureka Server
             }
         }
         stage('Run Eureka') {
