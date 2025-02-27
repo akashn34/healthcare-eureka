@@ -9,8 +9,6 @@ pipeline {
                     url: 'https://github.com/akashn34/healthcare-eureka.git'
             }
         }
-    }
-}
 
         stage('Build & Package Eureka') {
             steps {
