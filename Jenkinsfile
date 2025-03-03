@@ -1,27 +1,43 @@
 pipeline {
     agent any
-
-    tools {
-        maven 'Maven'  // Use the Maven tool configured in Jenkins
+    environment {
+        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'develop', 
-                    credentialsId: 'github-credentials', 
-                    url: 'https://github.com/akashn34/healthcare-eureka.git'
+                git branch: 'develop', credentialsId: 'github-credentials', url: 'https://github.com/akashn34/healthcare-app.git'
             }
         }
 
-        stage('Build & Package Eureka') {
+        stage('Build Eureka JAR') {
             steps {
-                sh 'mvn clean package'               // Build the Java Eureka Server
+                sh 'mvn clean package -DskipTests'
             }
         }
-        stage('Run Eureka') {
+
+        stage('Build Docker Image') {
             steps {
-                sh 'java -jar target/*.jar'            // Run the Eureka Server
+                sh 'docker build -t healthcare-eureka .'
+            }
+        }
+
+        stage('Stop and Remove Existing Container') {
+            steps {
+                script {
+                    def containerExists = sh(script: "docker ps -a -q --filter 'name=healthcare-eureka'", returnStdout: true).trim()
+                    if (containerExists) {
+                        sh 'docker stop healthcare-eureka || true'
+                        sh 'docker rm healthcare-eureka || true'
+                    }
+                }
+            }
+        }
+
+        stage('Run Eureka Server') {
+            steps {
+                sh 'docker run -d -p 8761:8761 --name healthcare-eureka healthcare-eureka'
             }
         }
     }
