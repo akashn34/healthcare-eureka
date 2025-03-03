@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+        PATH = "/opt/homebrew/bin:/opt/homebrew/Cellar/maven/3.9.9/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
     }
 
     stages {
